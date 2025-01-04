@@ -19,22 +19,26 @@ fs.readFile("urls.txt", "utf8", (err, data) => {
 
   urls.forEach((url) => {
     if (url) {
+      let timeStart = new Date().toLocaleString()
+      let log = ''
+
       fetch(url)
         .then((res) => {
           if (res.status === 200) {
-            console.log(`"${url}" is valid ✅`)
+            const timePassed = new Date().getTime() - new Date(timeStart).getTime()
+            log = `"${url}" is valid ✅ - ${timePassed}ms`
 
-            // save the valid url to output.txt
-            fs.appendFileSync("output.txt", `"${url}" is valid ✅\n`)
+            console.log(log);
           } else {
-            console.log(`"${url}" is invalid ❌`)
-
-            // save the invalid url to output.txt
-            fs.appendFileSync("output.txt", `"${url}" is invalid ❌\n`)
+            log = `"${url}" is invalid ❌ - ERR:${res.status}`
+            console.log(log)
           }
         })
         .catch((err) => {
           console.error(err)
+        })
+        .finally(() => {
+          fs.appendFileSync("output.txt", `${log}\n`)
         })
     }
   })
